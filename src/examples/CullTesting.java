@@ -7,7 +7,7 @@ import org.lwjgl.opengl.DisplayMode;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class TriangleFan {
+public class CullTesting {
 	private static final double PI= 3.1415;
 	static boolean flagDebth=true;
 	
@@ -48,47 +48,29 @@ public class TriangleFan {
 		while(!Display.isCloseRequested()){
 			glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 			
-					
-			
 			if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT)){
-				if(xrotate>360)xrotate=0;
-				xrotate+=0.01;
-				//Display.setTitle("xRotate: "+xrotate);
-			}
-			
+				xrotate+=0.03;
+			}			
 			if(Keyboard.isKeyDown(Keyboard.KEY_LEFT)){
-				if(xrotate<0)xrotate=360;
-				xrotate-=0.01;
-				//Display.setTitle("xRotate: "+xrotate);
+				xrotate-=0.03;
 			}
 			if(Keyboard.isKeyDown(Keyboard.KEY_DOWN)){
-				yrotate+=0.01;
-				//Display.setTitle("yRotate: "+yrotate);
+				yrotate+=0.03;
 			}
-			
 			if(Keyboard.isKeyDown(Keyboard.KEY_UP)){
-				yrotate-=0.01;
-				//Display.setTitle("yRotate: "+xrotate);
+				yrotate-=0.03;
 			}
 			if(Keyboard.isKeyDown(Keyboard.KEY_R)){
-				xrotate=0;
-				yrotate=0;
-				//Display.setTitle("xRotate: "+xrotate);
+				xrotate=0; yrotate=0;
 			}
-			
 
+			//glFrontFace(GL_CW);
+			//glCullFace(GL_CW);
+			glEnable(GL_DEPTH_TEST);
+			glPolygonMode(GL_BACK, GL_LINE);
+			//glPolygonMode(GL_BACK, GL_FILL);
 			while(Keyboard.next()){
 				if(Keyboard.getEventKeyState()){
-					if(Keyboard.getEventKey()==Keyboard.KEY_D)
-						glEnable(GL_DEPTH_TEST);
-					if(Keyboard.getEventKey()==Keyboard.KEY_F)
-						glDisable(GL_DEPTH_TEST);
-					
-					if(Keyboard.getEventKey()==Keyboard.KEY_L)
-						glPolygonMode(GL_BACK, GL_LINE);
-					if(Keyboard.getEventKey()==Keyboard.KEY_K)
-						glPolygonMode(GL_BACK, GL_FILL);
-					
 					if(Keyboard.getEventKey()==Keyboard.KEY_Q)
 						glEnable(GL_CULL_FACE);
 					if(Keyboard.getEventKey()==Keyboard.KEY_W)
@@ -96,46 +78,35 @@ public class TriangleFan {
 				}
 			}
 			
-			glCullFace(GL_BACK);
+			
 			//glEnable(GL_CULL_FACE);
 			
 			glPushMatrix();
 			glRotatef(xrotate, 0, 1, 0);
 			glRotatef(yrotate, 1, 0, 0);
 			
-			glRectf(100, 100, 110, 110);
-			glRectf(100, -100, 120, -120);
 			
-			int counter=0;
-			glBegin(GL_TRIANGLE_FAN);
-				glVertex3f(0, 0, 75);	
-			for(float i=0;i<(2*PI);i+=(PI/8.0)){
-				counter++;
-				if(counter%2==0) glColor3f(0, 1, 0);
-				else glColor3f(0, 0,1);
-		
-				float x=(float) (50*Math.cos(i));
-				float y=(float) (50*Math.sin(i));
-				glVertex2f(x, y);	
-			}
+			glBegin(GL_QUADS);
+				glColor3f(0.7f, 0, 0);
+				glVertex2f(0,0);
+				glVertex2f(50, 0);
+				glVertex2f(50, 50);
+				glVertex2f(0, 50);
+
+				glColor3f(03f, 0, 0);
+				glVertex3f(0, 0, 0);
+				glVertex3f(0, 50, 0);
+				glVertex3f(0, 50, 50);
+				glVertex3f(0, 0, 50);
+				
+				glColor3f(0f, 03f, 0);
+				glVertex3f(0, 0, 50);
+				glVertex3f(0, 50, 50);
+				glVertex3f(50, 50, 50);
+				glVertex3f(50, 0, 50);
 			glEnd();
 			
-			//glFrontFace(GL_CCW);
-			int counter1=0;
-			//base cvc
-			glBegin(GL_TRIANGLE_FAN);
-				glVertex2f(0, 0);	
-			for(float i=0;i<(2*PI);i+=(PI/8.0)){
-				counter1++;
-				if(counter1%2==0) glColor3f(0, 1, 1);
-				else glColor3f(1, 0,1);
-		
-				float x=(float) (50*Math.cos(i));
-				float y=(float) (50*Math.sin(i));
-				glVertex2f(x, y);	
-			}
-			glEnd();
-			
+				
 			glPopMatrix();
 			
 			Display.update();
@@ -146,7 +117,7 @@ public class TriangleFan {
 	}
 	
 	public static void main(String[] args) {
-		TriangleFan display=new TriangleFan();
+		CullTesting display=new CullTesting();
 		display.start();
 	}
 }
